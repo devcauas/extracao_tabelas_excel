@@ -1,36 +1,40 @@
-Extração de Tabelas de Excel
-Este projeto tem como objetivo realizar a extração de dados de tabelas em arquivos Excel, permitindo que você trabalhe com as informações de maneira fácil e eficiente.
+# Extração de tabelas de PDF para Excel
 
-Funcionalidades
-- Leitura de arquivos Excel.
+Extrai as tabelas de um PDF e salva cada uma como um arquivo Excel. O texto corrido é descartado.
 
-- Extração de dados de tabelas.
+## Como funciona
 
-- Processamento e transformação de dados.
+```text
+resultado.pdf ──> LlamaParse (Markdown, uma página por arquivo) ──> regex encontra as tabelas ──> Pandas ──> .xlsx
+```
 
-- Geração de resultados em formato PDF.
+1. **`main.py`** envia o PDF para o [LlamaParse](https://docs.cloud.llamaindex.ai/llamaparse/getting_started), a API de parsing da LlamaIndex, pedindo só as tabelas. Cada página volta em Markdown e é salva em `meu_pdf/paginaN.md`.
+2. **`transformar_excel.py`** lê cada página, encontra os blocos de tabela Markdown com uma expressão regular, carrega cada um no Pandas (separador `|`), remove linhas e colunas vazias e grava `tabelas/PaginaNTabelaM.xlsx`.
 
-Como Usar
-Clone o repositório para o seu ambiente local:
+## Como usar
 
+Pré-requisitos: Python 3.10+ e uma chave da [LlamaCloud](https://cloud.llamaindex.ai/).
+
+```bash
 git clone https://github.com/devcauas/extracao_tabelas_excel.git
-Instale as dependências necessárias:
-
-Se estiver usando um ambiente virtual, ative-o e execute:
-
+cd extracao_tabelas_excel
 pip install -r requirements.txt
-Execute o script principal para começar a extração de dados:
 
-python main.py
-Caso deseje usar algum outro arquivo, como o transformar_excel.py, execute o script correspondente.
+# a chave fica numa variável de ambiente, nunca no código
+export LLAMA_CLOUD_API_KEY="sua-chave"        # Linux/macOS
+# $env:LLAMA_CLOUD_API_KEY = "sua-chave"      # Windows (PowerShell)
 
-Contribuindo
-Faça um fork do repositório.
+python main.py                 # PDF -> Markdown (meu_pdf/)
+python transformar_excel.py    # Markdown -> Excel (tabelas/)
+```
 
-Crie uma nova branch (git checkout -b feature/nova-funcionalidade).
+Para outro PDF, troque `resultado.pdf` em `main.py`.
 
-Faça suas modificações e commit (git commit -m 'Adiciona nova funcionalidade').
+## Tecnologias
 
-Envie a branch para o seu repositório (git push origin feature/nova-funcionalidade).
+Python · LlamaParse (LlamaIndex) · Pandas · openpyxl · expressões regulares
 
-Abra um Pull Request para a branch main.
+## Limitações
+
+- As páginas são processadas na ordem que o sistema de arquivos devolve, então a numeração dos arquivos Excel pode não seguir a ordem das páginas.
+- Tabelas que o LlamaParse não reconhece como tabela Markdown ficam de fora.

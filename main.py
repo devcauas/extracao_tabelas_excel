@@ -1,6 +1,8 @@
 import os
 
-os.environ["LLAMA_CLOUD_API_KEY"] = "llx-rUKDGAmx9yT5Zxj4LeXIDIq5VdM9Cd1ugZooowyeKmkLWQ6p"
+# A chave da LlamaCloud vem da variável de ambiente LLAMA_CLOUD_API_KEY (ver README)
+if not os.getenv("LLAMA_CLOUD_API_KEY"):
+    raise SystemExit("Defina a variável de ambiente LLAMA_CLOUD_API_KEY antes de rodar.")
 
 from llama_parse import LlamaParse
 
